@@ -1,0 +1,19 @@
+{
+  "name": "react-componentes-reutilizaveis",
+  "version": "1.0.0",
+  "description": "estudos-alura",
+  "main": "index.js",
+  "dependencies": {
+    "create-react-app": "^1.0.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/richellyitalo/estudos-alura"
+  },
+  "author": "richellyitalo",
+  "license": "ISC"
+}
