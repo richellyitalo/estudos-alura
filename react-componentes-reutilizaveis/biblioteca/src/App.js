@@ -1,16 +1,27 @@
 import React, { Component } from 'react';
 import './css/pure-min.css';
 import './css/side-menu.css';
+import $ from 'jquery';
 
 class App extends Component {
     constructor() {
         super();
-        this.state = {lista: [
-            {nome: 'Richelly Italo', email: 'richellyitalo@mail.com'}
-        ]};
+        this.state = {lista: []};
     }
 
-      render() {
+    componentWillMount() {
+        $.ajax({
+            url: 'http://localhost:8080/api/autores',
+            dataType: 'json',
+            success: function (response) {
+                this.setState({
+                    lista: response
+                })
+            }.bind(this)
+        });
+    }
+
+    render() {
         return (
             <div id="layout">
                 <a href="#menu" id="menuLink" className="menu-link">
@@ -81,7 +92,7 @@ class App extends Component {
                 </div>
             </div>
         );
-      }
+    }
 }
 
 export default App;
