@@ -25,6 +25,9 @@ class Perfil(object):
 
         for linha in arquivo:
             valores = linha.split(',')
+
+            if (len(valores) is not 3):
+                raise Perfil_Error('A linha de arquivo deve ter 3 valores')
             perfis.append(classe(*valores))
 
         arquivo.close()
@@ -77,3 +80,9 @@ class Conta_Corrente(Conta):
 
     def calcular_imposto(self):
         return super(Conta_Corrente, self).calcular_imposto() + self.bonus
+
+class Perfil_Error(Exception):
+    def __init__(self, mensagem):
+        self.mensagem = mensagem
+    def __str__(self):
+        return repr(self.mensagem)
