@@ -13,7 +13,7 @@ class App extends Component {
         $.ajax({
             url: 'http://localhost:8080/api/autores',
             dataType: 'json',
-            success: function (response) {
+            success: function(response) {
                 this.setState({
                     lista: response
                 })
