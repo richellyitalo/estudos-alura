@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import $ from 'jquery';
 import InputCustomizado from './componentes/InputCustomizado';
 import BotaoSubmitCustomizado from './componentes/BotaoSubmitCustomizado';
-import PubSubJS from 'pubsub-js';
+import PubSub from 'pubsub-js';
+import TratadorDeErros from './TratadorDeErros';
 
 class FormularioAutor extends Component
 {
@@ -42,11 +43,16 @@ class FormularioAutor extends Component
                 // Usado apenas sem o PubSubJS
                 // this.props.callbackAtualizaListagem(response);
 
-                PubSubJS.publish('atualiza-lista-autor', response);
+                PubSub.publish('atualiza-lista-autor', response);
 
             }.bind(this),
             error: function(response) {
-                console.log('erro', response);
+                if (response.status === 400) {
+                    new TratadorDeErros().listar(response.responseJSON);
+                }
+            },
+            beforeSend: function() {
+                PubSub.publish('limpa-erro');
             }
         });
     }
@@ -118,7 +124,7 @@ export default class AutorBox extends Component
             }.bind(this)
         });
 
-        PubSubJS.subscribe('atualiza-lista-autor', function(msg, data) {
+        PubSub.subscribe('atualiza-lista-autor', function(msg, data) {
             this.setState({lista: data});
         }.bind(this));
     }
