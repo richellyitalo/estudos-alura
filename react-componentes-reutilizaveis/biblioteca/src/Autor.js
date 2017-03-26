@@ -141,8 +141,13 @@ export default class AutorBox extends Component
                 Esta forma é usada apenas sem o PubSubJS
                 <FormularioAutor callbackAtualizaListagem={this.atualizaListagem}/>
                 */}
-                <FormularioAutor/>
-                <TabelaAutores lista={this.state.lista}/>
+                <div className="header">
+                    <h1>Cadastro de Autores</h1>
+                </div>
+                <div className="content" id="content">
+                    <FormularioAutor/>
+                    <TabelaAutores lista={this.state.lista}/>
+                </div>
             </div>
         );
     }
