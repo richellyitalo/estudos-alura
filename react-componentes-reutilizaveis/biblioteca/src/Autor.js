@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import $ from 'jquery';
 import InputCustomizado from './componentes/InputCustomizado';
 import BotaoSubmitCustomizado from './componentes/BotaoSubmitCustomizado';
+import PubSubJS from 'pubsub-js';
 
 class FormularioAutor extends Component
 {
@@ -37,7 +38,12 @@ class FormularioAutor extends Component
             success: function(response) {
                 // this.setState({lista: response});
                 this.setState({nome: '', email: '', senha: ''});
-                this.props.callbackAtualizaListagem(response);
+
+                // Usado apenas sem o PubSubJS
+                // this.props.callbackAtualizaListagem(response);
+
+                PubSubJS.publish('atualiza-lista-autor', response);
+
             }.bind(this),
             error: function(response) {
                 console.log('erro', response);
@@ -98,7 +104,7 @@ export default class AutorBox extends Component
     constructor() {
         super();
         this.state = {lista: []};
-        this.atualizaListagem = this.atualizaListagem.bind(this);
+        // this.atualizaListagem = this.atualizaListagem.bind(this);
     }
 
     componentWillMount() {
@@ -111,16 +117,25 @@ export default class AutorBox extends Component
                 })
             }.bind(this)
         });
+
+        PubSubJS.subscribe('atualiza-lista-autor', function(msg, data) {
+            this.setState({lista: data});
+        }.bind(this));
     }
 
-    atualizaListagem(novaLista) {
-        this.setState({lista: novaLista});
-    }
+    // Usada sem o PubSubJS
+    // atualizaListagem(novaLista) {
+    //     this.setState({lista: novaLista});
+    // }
 
     render() {
         return(
             <div>
+                {/*
+                Esta forma é usada apenas sem o PubSubJS
                 <FormularioAutor callbackAtualizaListagem={this.atualizaListagem}/>
+                */}
+                <FormularioAutor/>
                 <TabelaAutores lista={this.state.lista}/>
             </div>
         );
