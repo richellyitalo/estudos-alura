@@ -11,27 +11,36 @@ class FormularioAutor extends Component
         super();
         this.state = {nome: '', email: '', senha: ''};
         this.enviaForm = this.enviaForm.bind(this);
-        this.setNome = this.setNome.bind(this);
-        this.setEmail = this.setEmail.bind(this);
-        this.setSenha = this.setSenha.bind(this);
+        this.setHandle = this.setHandle.bind(this);
+        // sem o handle
+        // this.setNome = this.setNome.bind(this);
+        // this.setEmail = this.setEmail.bind(this);
+        // this.setSenha = this.setSenha.bind(this);
     }
 
-    setNome(event) {
-        this.setState({nome: event.target.value});
+    setHandle(inputName, event) {
+        let field = {};
+        field[inputName] = event.target.value;
+        this.setState(field);
     }
 
-    setEmail(event) {
-        this.setState({email: event.target.value});
-    }
-
-    setSenha(event) {
-        this.setState({senha: event.target.value});
-    }
+    // sem o handle
+    // setNome(event) {
+    //     this.setState({nome: event.target.value});
+    // }
+    //
+    // setEmail(event) {
+    //     this.setState({email: event.target.value});
+    // }
+    //
+    // setSenha(event) {
+    //     this.setState({senha: event.target.value});
+    // }
 
     enviaForm(event) {
         event.preventDefault();
         $.ajax({
-            url: 'http://localhost:8080/api/autores',
+            url: 'https://cdc-react.herokuapp.com/api/autores',
             contentType: 'application/json',
             dataType: 'json',
             type: 'post',
@@ -61,9 +70,9 @@ class FormularioAutor extends Component
         return(
             <div className="pure-form pure-form-aligned">
                 <form className="pure-form pure-form-aligned" onSubmit={this.enviaForm}>
-                    <InputCustomizado name="nome" type="text" onChange={this.setNome} value={this.state.nome} label="Nome"/>
-                    <InputCustomizado name="email" type="email" onChange={this.setEmail} value={this.state.email} label="E-mail"/>
-                    <InputCustomizado name="senha" type="password" onChange={this.setSenha} value={this.state.senha} label="Senha"/>
+                    <InputCustomizado name="nome" type="text" onChange={this.setHandle.bind(this, 'nome')} value={this.state.nome} label="Nome"/>
+                    <InputCustomizado name="email" type="email" onChange={this.setHandle.bind(this, 'email')} value={this.state.email} label="E-mail"/>
+                    <InputCustomizado name="senha" type="password" onChange={this.setHandle.bind(this, 'senha')} value={this.state.senha} label="Senha"/>
                     <BotaoSubmitCustomizado label="Gravar"/>
                 </form>
 
@@ -115,7 +124,7 @@ export default class AutorBox extends Component
 
     componentWillMount() {
         $.ajax({
-            url: 'http://localhost:8080/api/autores',
+            url: 'https://cdc-react.herokuapp.com/api/autores',
             dataType: 'json',
             success: function(response) {
                 this.setState({

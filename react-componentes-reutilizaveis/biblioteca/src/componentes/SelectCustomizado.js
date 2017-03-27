@@ -13,7 +13,7 @@ export default class SelectCustomizado extends Component
             <div className="pure-control-group">
                 <label htmlFor={this.props.id}>{this.props.label}</label>
 
-                <select name={this.props.name} value={this.props.value} onChange={this.props.onChange}>
+                <select {...this.props}>
                     <option value="">Selecione</option>
                     {
                         this.props.options.map(function(option) {

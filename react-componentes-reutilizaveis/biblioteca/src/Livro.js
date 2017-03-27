@@ -11,27 +11,39 @@ class FormularioLivro extends Component
     constructor(){
         super();
         this.state = {titulo: '', preco: '0.00', autorId: '', autores: []};
-        this.setTitulo = this.setTitulo.bind(this);
-        this.setPreco = this.setPreco.bind(this);
-        this.setAutor = this.setAutor.bind(this);
+        // sem o setHandle
+        // this.setTitulo = this.setTitulo.bind(this);
+        // this.setPreco = this.setPreco.bind(this);
+        // this.setAutor = this.setAutor.bind(this);
         this.enviaForm = this.enviaForm.bind(this);
+        this.setHandle = this.setHandle.bind(this);
     }
 
-    setTitulo(event){
-        this.setState({titulo: event.target.value});
+    setHandle(event){
+        let target = event.target;
+        let name = target.name;
+        let value = target.value;
+        this.setState({
+            [name]: value
+        });
     }
 
-    setPreco(event){
-        this.setState({preco: event.target.value});
-    }
-
-    setAutor(event){
-        this.setState({autorId: event.target.value});
-    }
+    // sem o setHandle
+    // setTitulo(event){
+    //     this.setState({titulo: event.target.value});
+    // }
+    //
+    // setPreco(event){
+    //     this.setState({preco: event.target.value});
+    // }
+    //
+    // setAutor(event){
+    //     this.setState({autorId: event.target.value});
+    // }
 
     componentWillMount(){
         $.ajax({
-            url: 'http://localhost:8080/api/autores',
+            url: 'https://cdc-react.herokuapp.com/api/autores',
             dataType: 'json',
             success: function(response) {
                 this.setState({autores: response});
@@ -40,9 +52,9 @@ class FormularioLivro extends Component
     }
 
     enviaForm(event){
-        event.preventDefault();
+        event.preventDefault()      ;
         $.ajax({
-            url: 'http://localhost:8080/api/livros',
+            url: 'https://cdc-react.herokuapp.com/api/livros',
             dataType: 'json',
             contentType: 'application/json',
             type: 'post',
@@ -70,9 +82,9 @@ class FormularioLivro extends Component
         return(
             <div className="pure-form pure-form-aligned">
                 <form className="pure-form pure-form-aligned" onSubmit={this.enviaForm}>
-                    <InputCustomizado name="titulo" type="text" onChange={this.setTitulo} value={this.state.titulo} label="Título"/>
-                    <InputCustomizado name="preco" type="text" onChange={this.setPreco} value={this.state.preco} label="Preço"/>
-                    <SelectCustomizado name="autorId" onChange={this.setAutor} value={this.state.autorId} options={this.state.autores} />
+                    <InputCustomizado name="titulo" type="text" onChange={this.setHandle} value={this.state.titulo} label="Título"/>
+                    <InputCustomizado name="preco" type="text" onChange={this.setHandle} value={this.state.preco} label="Preço"/>
+                    <SelectCustomizado name="autorId" onChange={this.setHandle} value={this.state.autorId} options={this.state.autores} />
                     <BotaoSubmitCustomizado label="Gravar"/>
                 </form>
 
@@ -124,7 +136,7 @@ export default class LivroBox extends Component
 
     componentWillMount(){
         $.ajax({
-            url: 'http://localhost:8080/api/livros',
+            url: 'https://cdc-react.herokuapp.com/api/livros',
             dataType: 'json',
             success: function(response) {
                 this.setState({lista: response})

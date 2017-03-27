@@ -1,5 +1,6 @@
 {
   "name": "biblioteca",
+  "homepage": "http://localhost/estudos-alura/react-componentes-reutilizaveis/biblioteca/build",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
