@@ -2,5 +2,5 @@
     <h1 class="text-center">Alurapic</h1>
 </div>
 <div class="container">
-   <img class="img-responsive center-block" src="img/leao.jpg" alt="leão">
+    <foto *ngFor="let foto of fotos" url="{{foto.url}}" titulo="{{foto.titulo}}"></foto>
 </div>
