@@ -12,10 +12,10 @@ export class CadastroComponent {
 
     foto: FotoComponent  = new FotoComponent();
     meuForm: FormGroup;
-    fotoService: FotoService;
+    service: FotoService;
 
     constructor(fotoService: FotoService, fb: FormBuilder ) {
-        this.fotoService = fotoService;
+        this.service = fotoService;
 
         this.meuForm = fb.group({
             titulo: ['', Validators.compose([
@@ -26,16 +26,18 @@ export class CadastroComponent {
         });
     }
 
-    cadastrar(event) {  
+    cadastrar(event) {
 
         event.preventDefault();
         
-        this.fotoService
-            .cadastra(this.foto)
+
+        this.service.cadastra(this.foto)
             .subscribe(() => {
-                console.log('Foto cadastrada.');
                 this.foto = new FotoComponent();
-            }, erro => console.log(erro));
+                console.log('Foto salva com sucesso');
+            }, erro => {
+                console.log(erro);
+            });
 
     }
 }
