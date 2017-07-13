@@ -4,6 +4,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
+            <div *ngIf="mensagem.length" class="alert alert-info">{{mensagem}}</div>
             <form>
                  <div class="input-group">
                     <span class="input-group-btn">
@@ -20,8 +21,12 @@
     <br>
 
     <div class="row">
-        <painel *ngFor="let foto of fotos | filtroPorTitulo:textoProcurado.value" titulo="{{foto.titulo | uppercase}}" class="col-md-2">
-            <foto  url="{{foto.url}}" titulo="{{foto.titulo}}"></foto>
+        <painel #painel *ngFor="let foto of fotos | filtroPorTitulo:textoProcurado.value" titulo="{{foto.titulo | uppercase}}" class="col-md-2">
+            <a [routerLink]="['/cadastro', foto._id]">
+                <foto url="{{foto.url}}" titulo="{{foto.titulo}}"></foto>
+            </a>
+            <!--<button class="btn btn-danger btn-block" (click)="remove(foto)">Remover</button>-->
+            <botao estilo="btn-danger btn-block" confirmacao="true" (acao)="remove(foto, painel)">Remover</botao>
         </painel>
     </div>
 </div>
