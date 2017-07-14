@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Timeline from './components/Timeline';
+import Header from './components/Header';
 
 class App extends Component {
     render() {
@@ -7,9 +8,9 @@ class App extends Component {
             <div id="root">
                 <div  className="main">
             
-                    
+                    <Header/>
                     <Timeline/>
-                </div> {/* fim .main */}
+                </div>
             </div>
         );
     }
