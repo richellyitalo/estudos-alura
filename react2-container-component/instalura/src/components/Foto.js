@@ -29,6 +29,7 @@ class FotoInfo extends Component {
                 <div className="foto-info-likes">
                     {
                         this.props.foto.likers.map(liker => {
+                            /* Link é do react-router */
                             return (<Link to={`/timeline/${liker.login}`} key={liker.login}>{liker.login}, </Link>)
                         })
                     }
@@ -66,6 +67,7 @@ class FotoAtualizacoes extends Component {
         super(props);
     }
     
+    // aqui é chamado o like do 'Timeline'
     like(event) {
  
         event.preventDefault();
@@ -73,6 +75,7 @@ class FotoAtualizacoes extends Component {
         this.props.like(this.props.foto.id);
     }
 
+    // aqui é chamado o comentar do 'Timeline'
     comentar(event) {
 
         event.preventDefault();
@@ -107,6 +110,13 @@ export default class FotoItem extends Component {
                 <img alt="foto" className="foto-src" src={this.props.foto.urlFoto}/>
 
                 <FotoInfo foto={this.props.foto}/>
+                {
+                    /* o {...this.props} é chamado de spread 
+                    ele passa todos os props via nome das chaves
+                    seria algo como:
+                    (...) FotoAtualizacoes foto={this.props.foto} like={this.props.like} comentar={this.props.comentar} (...)
+                     */
+                }
                 <FotoAtualizacoes {...this.props}/>
 
             </div>

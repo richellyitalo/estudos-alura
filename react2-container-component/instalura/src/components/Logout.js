@@ -3,12 +3,18 @@ import { browserHistory } from 'react-router';
 
 export default class Logout extends Component {
 
-  componentWillMount() {
-    localStorage.removeItem('auth-token');
-    browserHistory.push('/');
-  }
+    // utilizaremos o 'componentWillMount'
+    // pois a ação é realizada antes de renderizar a view
+    // que neste caso não será necessária, pois está 'return null'
+    componentWillMount() {
+        localStorage.removeItem('auth-token');
 
-  render() {
-    return null;
-  }
+        // aqui é o redirecionamento
+        browserHistory.push('/');
+    }
+
+    // desativa a exibição da view
+    render() {
+        return null;
+    }
 }
