@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import FotoItem from './Foto';
-import Pubsub from 'pubsub-js';
 import ReactCSSTransitionGroup from 'react/lib/ReactCSSTransitionGroup';
 
 export default class Timeline extends Component {
@@ -16,109 +15,29 @@ export default class Timeline extends Component {
         // o login que foi recebido é dos parametros aquele (:login)
         // ele é apenas para listar as fotos (lembre-se: é a rota pública)
         this.login = this.props.login;
+
+        // aqui foi necessário criar essa classe
+        // para separar a lógica da coisa de códigos react
+        // e se desejar, ficaria mais fácil incorporar outro framework
+        // agora será passado via props pelo 'App.js' -> this.logicaTimeline = new LogicaTimeline([]);
     }
 
     // like na foto
     // precisaremos apenas do ID
     // a API recebe o token, e internet já é feito a lógica de qual usuário laikou
     like(fotoId) {
-        // utlizando os '`' pode ser concatenado interamente valores com ${this.valor}
-        fetch(
-            `http://localhost:8080/api/fotos/${fotoId}/like?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`,
-            // como não estou passando nenhum valor 
-            // como o text no body
-            // não é encessário criar o header, basta determinar o 'method'
-            { method: 'POST' })
-
-            // resposta do server
-            // 1ª etapa - tratamento do valor
-            .then(response => {
-                if (response.ok) {
-                    // será usado o valor retornado
-                    // o liker {login: 'nome'}
-                    return response.json();
-                } else {
-                    throw new Error('Não foi possível dar like');
-                }
-            })
-            .then(liker => {
-                console.log(liker);
-                
-                Pubsub.publish('atualiza-like', { fotoId: fotoId, liker });
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        // necessário o bind na passagem da função no render: like={this.like.bind(this)}
+        this.props.store.like(fotoId);
     }
 
     comentar(fotoId, textoComentario) {
-
-        // uso dos parametros, pois estamos trabalhando com valores internos
-        // como 'body'
-        const requestInfo = {
-            method: 'POST',
-            body: JSON.stringify({ texto: textoComentario }),
-            headers: new Headers({
-                'Content-type': 'application/json'
-            })
-        };
-
-        fetch(`http://localhost:8080/api/fotos/${fotoId}/comment/?X-AUTH-TOKEN=${localStorage.getItem('auth-token')}`, requestInfo)
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('Não foi possível comentar');
-                }
-            })
-            .then(novoComentario => {
-
-                Pubsub.publish('novo comentario', { fotoId: fotoId, novoComentario });
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        this.props.store.comentar(fotoId, textoComentario);
     }
 
     // eventos do componente
     componentWillMount() {
-
-        Pubsub.subscribe('timeline', (topico, fotos) => {
-            this.setState({ fotos });
-        });
-
-        Pubsub.subscribe('atualiza-like', (msg, infoLiker) => {
-            // pega a foto onde ocorreu o like
-            const fotoAchada = this.state.fotos.find(foto => foto.id === infoLiker.fotoId);
-            // determina se foi laikeada
-            fotoAchada.likeada = ! fotoAchada.likeada;
-            
-            // pega o liker na foto
-            const possivelLiker = fotoAchada.likers.find(liker => liker.login === infoLiker.liker.login);
-
-            // se não tem o like, então adiciona o like nessa foto dentro da lista de likers
-            if (possivelLiker === undefined) {
-                fotoAchada.likers.push(infoLiker.liker);
-            
-            } else {
-                // caso já tenha, faz uma lista de todos os likers, com exceção do like em questão 'possivelLiker'
-                const novosLikers = fotoAchada.likers.filter(liker => liker.login !== infoLiker.liker.login);
-                fotoAchada.likers = novosLikers;
-            }
-
-            // fotoAchada é uma referência dentro de 'this.state.fotos'
-            // ele é redefinido para vigorar na view
-            this.setState({ fotos: this.state.fotos });
-        });
-
-        // processo semelhante para comentário
-        // pega a Foto, adiciona a Lista de comentários desta Foto
-        Pubsub.subscribe('novo comentario', (msg, infoComentario) => {
-            const fotoAchada = this.state.fotos.find(foto => foto.id === infoComentario.fotoId);
-            fotoAchada.comentarios.push(infoComentario.novoComentario);
-
-            // e redefine seu state
-            this.setState({fotos: this.state.fotos});
+        this.props.store.subscribe(fotos => {
+            this.setState({fotos: this.props.store.getState()})
         });
     }
 
@@ -136,14 +55,10 @@ export default class Timeline extends Component {
             // aqui estamos em /timeline/richelly por exemplo
             urlPerfil = `http://localhost:8080/api/public/fotos/${this.login}`;
         }
-
-        fetch(urlPerfil)
-            .then(response => response.json())
-            .then(fotos => {
-                this.setState({
-                    fotos: fotos
-                });
-            });
+        const listaFixa = [{"urlPerfil":"https://instagram.fcgh10-1.fna.fbcdn.net/t51.2885-19/11199408_569104449895751_1837574990_a.jpg","loginUsuario":"alots","horario":"15/07/2017 14:55","urlFoto":"https://instagram.fcgh10-1.fna.fbcdn.net/t51.2885-15/e35/14482111_1635089460122802_8984023070045896704_n.jpg?ig_cache_key=MTM1MzEzNjM4NzAxMjIwODUyMw%3D%3D.2","id":1,"likeada":true,"likers":[{"login":"vitor"},{"login":"rafael"},{"login":"alots"}],"comentarios":[{"login":"rafael","texto":"Material confined likewise it humanity raillery an unpacked as he. Three chief merit no if. Now how her edward engage not horses.","id":2},{"login":"alots","texto":"Material confined likewise it humanity raillery an unpacked as he. Three chief merit no if. Now how her edward engage not horses.","id":1},{"login":"alots","texto":"Comentei, ihuu","id":23}],"comentario":"comentario da foto"},{"urlPerfil":"https://instagram.fcgh10-1.fna.fbcdn.net/t51.2885-19/11199408_569104449895751_1837574990_a.jpg","loginUsuario":"alots","horario":"15/07/2017 14:55","urlFoto":"https://instagram.fcgh9-1.fna.fbcdn.net/t51.2885-15/e35/15276770_381074615568085_8052939980646907904_n.jpg?ig_cache_key=MTM5ODY4MDMyNjYyMDA1MDE4OQ%3D%3D.2","id":2,"likeada":true,"likers":[{"login":"vitor"}],"comentarios":[{"login":"vitor","texto":"Material confined likewise it humanity raillery an unpacked as he. Three chief merit no if. Now how her edward engage not horses.","id":3}],"comentario":"comentario da foto"}];
+        
+        this.props.store.dispatch({type: 'LISTAGEM', fotos: listaFixa});
+        //this.props.store.lista(urlPerfil);
     }
 
     // após o component ser montado
@@ -180,7 +95,7 @@ export default class Timeline extends Component {
                         e assim ser chamado de dentro do componente;
                         O 'key' é necessário pelo react */
                         this.state.fotos.map(
-                            foto => <FotoItem foto={foto} key={foto.id} like={this.like} comentar={this.comentar} />
+                            foto => <FotoItem foto={foto} key={foto.id} like={this.like.bind(this)} comentar={this.comentar.bind(this)} />
                         )
                     }
                 </ReactCSSTransitionGroup>

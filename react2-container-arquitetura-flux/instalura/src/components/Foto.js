@@ -61,11 +61,6 @@ class FotoInfo extends Component {
 } // end FotoInfo
 
 class FotoAtualizacoes extends Component {
-
-    constructor(props) {
-        
-        super(props);
-    }
     
     // aqui é chamado o like do 'Timeline'
     like(event) {
