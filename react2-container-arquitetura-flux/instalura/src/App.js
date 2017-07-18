@@ -1,23 +1,14 @@
 import React, { Component } from 'react';
 import Timeline from './components/Timeline';
 import Header from './components/Header';
-import TimelineStore from './logicas/TimelineStore';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import { timelineReducer } from './reducers/timeline';
 
-const timelineStore = new TimelineStore([]);
-
-// Reducer
-// state é o estado anterior que eu havia retornado
-
-function timelineReducer(state=[], action) {
-
-    if (action.type === 'LISTAGEM') {
-        return action.fotos;
-    }
-    return state;
-}
-
-const store = createStore(timelineReducer);
+const store = createStore(
+    timelineReducer,
+    applyMiddleware(thunk)
+);
 
 class App extends Component {
     
