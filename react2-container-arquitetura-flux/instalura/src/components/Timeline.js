@@ -40,7 +40,7 @@ export default class Timeline extends Component {
     // eventos do componente
     componentWillMount() {
         this.props.store.subscribe(fotos => {
-            this.setState({fotos: this.props.store.getState()})
+            this.setState({fotos: this.props.store.getState().timeline})
         });
     }
 

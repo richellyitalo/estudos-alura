@@ -1,4 +1,4 @@
-import Pubsub from 'pubsub-js';
+import { listagem, comentar, like, notifica } from '../actions/actionCreator';
 
 export default class TimelineStore {
     
@@ -26,7 +26,7 @@ export default class TimelineStore {
                     }
                 })
                 .then(liker => {     
-                    dispatch({type: 'LIKE', fotoId, liker});
+                    dispatch(like(fotoId, liker));
                     return liker;
                 })
                 .catch(error => {
@@ -58,7 +58,7 @@ export default class TimelineStore {
                 }
             })
             .then(novoComentario => {
-                dispatch({type: 'COMENTA', fotoId, novoComentario})
+                dispatch(comentar(fotoId, novoComentario));
                 return novoComentario;  
             })
             .catch(error => {
@@ -74,16 +74,29 @@ export default class TimelineStore {
             fetch(urlPerfil)
             .then(response => response.json())
             .then(fotos => {
-                //this.fotos = fotos;
-                dispatch({type: 'LISTAGEM', fotos})
+                //this.fotos = fotos; 
+                dispatch(listagem(fotos));
                 return fotos;
             });
         }
     }
 
-    subscribe(callback) {
-        Pubsub.subscribe('timeline', (topico, fotos) => {
-            callback(fotos);
-        });
+    static pesquisa(login) {
+        return dispatch => {
+
+            fetch(`http://localhost:8080/api/public/fotos/${login}`)
+            .then(response => response.json())
+            .then(fotos => {
+                if (fotos.length === 0 ) {
+                    dispatch(notifica('usuário não encontrado'));
+                } else {
+                    dispatch(notifica('usuário encontrado'));
+                }
+                // envia isto aos subscribes
+                // irá alterar apenas o componente da timeline
+                dispatch(listagem(fotos));
+                return fotos;
+            });
+        }
     }
 }

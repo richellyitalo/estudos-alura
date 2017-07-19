@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import Timeline from './components/Timeline';
 import Header from './components/Header';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import { timelineReducer } from './reducers/timeline';
+import { headerReducer } from './reducers/header';
 
+const reducers = combineReducers({timeline: timelineReducer, notificacao: headerReducer});
 const store = createStore(
-    timelineReducer,
+    reducers,
     applyMiddleware(thunk)
 );
-
+ 
 class App extends Component {
     
     render() {
@@ -18,7 +20,7 @@ class App extends Component {
                 <div className="main">
             
                     {/* componentes divididos  */}
-                    <Header/>
+                    <Header store={store}/>
                     <Timeline login={this.props.params.login} store={store}/>
                 </div>
             </div>

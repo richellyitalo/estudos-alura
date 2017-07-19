@@ -1,7 +1,21 @@
 import React, { Component } from 'react';
-import Pubsub from 'pubsub-js';
+import TimelineApi from '../logicas/TimelineApi';
 
 export default class Header extends Component {
+
+    constructor() {
+        super();
+
+        this.state = {
+            msg: ''
+        };
+    }
+
+    componentDidMount() {
+        this.props.store.subscribe( () => {
+            this.setState({msg: this.props.store.getState().notificacao});
+        }); 
+    }
 
     // como não iremos trabalhar agora com flux
     // utilizaremos o Pubsub
@@ -9,13 +23,7 @@ export default class Header extends Component {
 
         event.preventDefault();
 
-        fetch(`http://localhost:8080/api/public/fotos/${this.loginPesquisa.value}`)
-            .then(response => response.json())
-            .then(fotos => {
-                // envia isto aos subscribes
-                // irá alterar apenas o componente da timeline
-                Pubsub.publish('timeline', fotos);
-            });
+        this.props.store.dispatch(TimelineApi.pesquisa(this.loginPesquisa.value));
     }
 
     render() {
@@ -32,7 +40,7 @@ export default class Header extends Component {
                     <input ref={input => this.loginPesquisa = input} type="text" name="search" placeholder="Pesquisa" className="header-busca-campo"/>
                     <input type="submit" value="Buscar" className="header-busca-submit" />
                 </form>
-        
+                <span>{this.state.msg}</span>
                 <nav>
                     <ul className="header-nav">
                     <li className="header-nav-item">
