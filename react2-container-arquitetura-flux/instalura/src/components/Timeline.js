@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import FotoItem from './Foto';
 import ReactCSSTransitionGroup from 'react/lib/ReactCSSTransitionGroup';
 import TimelineApi from '../logicas/TimelineApi';
+import { connect } from 'react-redux';
 
-export default class Timeline extends Component {
+class Timeline extends Component {
 
     constructor(props) {
 
@@ -11,7 +12,7 @@ export default class Timeline extends Component {
 
         // todas as fotos irão estar aqui neste state
         // inicialmente como vazia
-        this.state = { fotos: [] };
+       // não precisa, agora está no connect -> this.state = { fotos: [] };
  
         // o login que foi recebido é dos parametros aquele (:login)
         // ele é apenas para listar as fotos (lembre-se: é a rota pública)
@@ -26,23 +27,26 @@ export default class Timeline extends Component {
     // like na foto
     // precisaremos apenas do ID
     // a API recebe o token, e internet já é feito a lógica de qual usuário laikou
+    /*
+    agora estão no connect do react-redux (final do código)
     like(fotoId) {
 
         // necessário o bind na passagem da função no render: like={this.like.bind(this)}
         this.props.store.dispatch(TimelineApi.like(fotoId));
     }
-
     comentar(fotoId, textoComentario) {
 
         this.props.store.dispatch(TimelineApi.comentar(fotoId, textoComentario));
-    }
+    }*/
 
     // eventos do componente
+    /*
+    não mais usar, está no connnect 
     componentWillMount() {
         this.props.store.subscribe(fotos => {
             this.setState({fotos: this.props.store.getState().timeline})
         });
-    }
+    }*/
 
     // função privada para carregar de acordo com a url (publica/privada)
     carregaFotos() {
@@ -63,7 +67,7 @@ export default class Timeline extends Component {
         //this.props.store.dispatch({type: 'LISTAGEM', fotos: listaFixa});
         //this.props.store.lista(urlPerfil);
 
-        this.props.store.dispatch(TimelineApi.lista(urlPerfil));
+        this.props.lista(urlPerfil);
     }
 
     componentDidMount () {
@@ -76,9 +80,8 @@ export default class Timeline extends Component {
     // e assim chamar o carregaFotos novamente
     componentWillReceiveProps(nextProps) {
 
-        if (nextProps !== undefined) {
+        if (nextProps !== this.login) {
             this.login = nextProps.login;
-            console.log(this.login);
             this.carregaFotos();
         }
     }
@@ -100,8 +103,8 @@ export default class Timeline extends Component {
                         /* todas as função são passadas para o FotoItem(like, comentar) 
                         e assim ser chamado de dentro do componente;
                         O 'key' é necessário pelo react */
-                        this.state.fotos.map(
-                            foto => <FotoItem foto={foto} key={foto.id} like={this.like.bind(this)} comentar={this.comentar.bind(this)} />
+                        this.props.fotos.map(
+                            foto => <FotoItem foto={foto} key={foto.id} like={this.props.like} comentar={this.props.comentar} />
                         )
                     }
                 </ReactCSSTransitionGroup>
@@ -109,3 +112,28 @@ export default class Timeline extends Component {
         );
     }
 }
+
+const mapStateToProps = (state) => {
+    return { fotos : state.timeline };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        like: (fotoId) => {
+            dispatch(TimelineApi.like(fotoId))
+        },
+        comentar: (fotoId, textoComentario) => {
+            dispatch(TimelineApi.comentar(fotoId, textoComentario))
+        },
+        lista: (urlPerfil) => {
+            dispatch(TimelineApi.lista(urlPerfil))
+        }
+    }
+};
+
+const TimelineContainer = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Timeline);
+
+export default TimelineContainer;

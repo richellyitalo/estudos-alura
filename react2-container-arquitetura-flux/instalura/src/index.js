@@ -15,6 +15,18 @@ import './css/login.css';
 import { Router, Route, browserHistory } from 'react-router';
 import { matchPattern } from 'react-router/lib/PatternUtils';
 
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
+import thunk from 'redux-thunk';
+import { timelineReducer } from './reducers/timeline';
+import { headerReducer } from './reducers/header';
+
+const reducers = combineReducers({timeline: timelineReducer, notificacao: headerReducer});
+const store = createStore(
+    reducers,
+    applyMiddleware(thunk)
+);
+
 function verificaAutenticacao(nextState, replace) {
   
   const resultado = matchPattern('/timeline(/:login)', nextState.location.pathname);
@@ -39,21 +51,23 @@ function verificaAutenticacao(nextState, replace) {
 
 ReactDOM.render(
   (
-    <Router history={browserHistory}>
+    <Provider store={store}>
+      <Router history={browserHistory}>
 
-      { /* chama o component Login */ }
-      <Route path="/" component={Login}/>
+        { /* chama o component Login */ }
+        <Route path="/" component={Login}/>
 
-      { /* essa rota é protegida com a condição de não ser passado o parametro :login ver {A} */ }
-      <Route path="/timeline(/:login)" component={App} onEnter={verificaAutenticacao}/>
+        { /* essa rota é protegida com a condição de não ser passado o parametro :login ver {A} */ }
+        <Route path="/timeline(/:login)" component={App} onEnter={verificaAutenticacao}/>
 
-      { /* 
-        o component {Logout} não possui view 
-        que irá destruir o location 'auth-token'
-        e retornar a home com {browserHistory}
-      */ }
-      <Route path="/logout" component={Logout}/>
-    </Router>
+        { /* 
+          o component {Logout} não possui view 
+          que irá destruir o location 'auth-token'
+          e retornar a home com {browserHistory}
+        */ }
+        <Route path="/logout" component={Logout}/>
+      </Router>
+    </Provider>
   ),
   document.getElementById('root')
 );
